@@ -11,6 +11,7 @@ source ./venv/bin/activate
 ```
 - install [gitpython ](https://pypi.org/project/GitPython) dependency
 ```bash
+pip install toml
 pip install GitPython
 
 ```
@@ -19,3 +20,5 @@ pip install GitPython
 ```bash
 python main.py
 ```
+
+
