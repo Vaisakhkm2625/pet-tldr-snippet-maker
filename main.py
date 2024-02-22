@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     data = {"snippets": commands}
 
-    with open("output.toml", "w") as toml_file:
+    with open("./output/snippet.toml", "w") as toml_file:
         toml.dump(data, toml_file)
 
     #for description, cmd in commands:
