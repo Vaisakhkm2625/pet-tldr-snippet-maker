@@ -19,14 +19,16 @@ def scrape_tldr_github(category: Optional[str] = None) -> List[dict]:
 def scrape_tldr_repo(url: str, category: Optional[str] = None) -> List[dict[str,str]]:
     tmp_dir = tempfile.mkdtemp()
     repo_path = os.path.join(tmp_dir, "tldr")
+    
 
+    print(f"cloning repo {url} to {repo_path}...")
     Repo.clone_from(url, repo_path, depth=1)
 
     result = []
 
+    print(f"parsing {category}")
     if category:
         sp = os.path.join(repo_path, "pages", category)
-        print(sp)
         if not os.path.exists(os.path.join(repo_path, "pages", category)):
             raise ValueError(f"Category {category} doesn't exist")
         result.extend(parse_tldr_folder(category, os.path.join(repo_path, "pages", category)))
@@ -51,7 +53,7 @@ def parse_tldr_folder(category: str, path: str) -> List[dict[str, str]]:
     result = []
     for entry in os.listdir(path):
         entry_path = os.path.join(path, entry)
-        print(entry_path)
+        #print(entry_path)
         if os.path.isfile(entry_path):
             with open(entry_path, "r") as file:
                 result.extend(parse_page(file.read()))
@@ -77,39 +79,40 @@ def parse_page(content: str): #-> List[dict[str, str]]:
 if __name__ == "__main__":
 
 
-    tag:str = ""
+    category:str = ""
 
-    tags = ["android","common","freebsd","linux","netbsd","openbsd","osx","sunos","windows"]
+    categories = ["android","common","freebsd","linux","netbsd","openbsd","osx","sunos","windows"]
+
+    output_file = "./output/snippet.toml"
 
     if len(argv)>1:
 
-        if argv[1] not in tags:
-            print(f"{argv[1]} not a valid tag, pass one from ")
-            print(','.join(tags))
+        if argv[1] not in categories:
+            print(f"{argv[1]} not a valid category, pass one from ")
+            print(','.join(categories))
             exit(0)
 
 
-        print(f"Selecting tag \"{argv[1]}\"")
+        print(f"Selecting category \"{argv[1]}\"")
 
     else:
-        print("defaulting to tag \"common\"")
-        print("other tags you can pass as argument `python main.py <tag>` are:")
-        print(','.join(tags))
+        print("defaulting to category \"common\"")
+        print("other categories you can pass as argument `python main.py <category>` are:")
+        print(','.join(categories))
             
-        tag = "common"
+        category = "common"
 
 
-    print(tag)
 
-
-    commands = scrape_tldr_github(tag)
+    commands = scrape_tldr_github(category)
 
     #data: Mapping[str, List[Mapping[str, Any]]] = {"snippets": commands}
 
 
     data = {"snippets": commands}
 
-    with open("./output/snippet.toml", "w") as toml_file:
+    print(f"writing to {output_file}")
+    with open(output_file, "w") as toml_file:
         toml.dump(data, toml_file)
 
     #for description, cmd in commands:
