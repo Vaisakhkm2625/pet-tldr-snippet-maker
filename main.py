@@ -1,5 +1,6 @@
 import os
 import re
+from sys import argv
 import tempfile
 import toml
 from typing import Any, List, Mapping, Optional, Tuple
@@ -74,7 +75,34 @@ def parse_page(content: str): #-> List[dict[str, str]]:
     #    print()
 
 if __name__ == "__main__":
-    commands = scrape_tldr_github("common")
+
+
+    tag:str = ""
+
+    tags = ["android","common","freebsd","linux","netbsd","openbsd","osx","sunos","windows"]
+
+    if len(argv)>1:
+
+        if argv[1] not in tags:
+            print(f"{argv[1]} not a valid tag, pass one from ")
+            print(','.join(tags))
+            exit(0)
+
+
+        print(f"Selecting tag \"{argv[1]}\"")
+
+    else:
+        print("defaulting to tag \"common\"")
+        print("other tags you can pass as argument `python main.py <tag>` are:")
+        print(','.join(tags))
+            
+        tag = "common"
+
+
+    print(tag)
+
+
+    commands = scrape_tldr_github(tag)
 
     #data: Mapping[str, List[Mapping[str, Any]]] = {"snippets": commands}
 
